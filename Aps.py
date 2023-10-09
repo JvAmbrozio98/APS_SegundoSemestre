@@ -82,7 +82,7 @@ cript = IntVar()
 
 janela.title("APS")
 
-texto = Label(janela, text = "Insira aqui o seu texto", font="Arial 25")
+texto = Label(janela, text = "aaaaaaaaaaa", font="Arial 25")
 texto.grid(columnspan=3,row=0, padx=10, pady=0)
 
 texto = Label(janela, text = "partisipantes: Carlos, Giovane, João, Ottávio, Sárley", font="Arial 10")
