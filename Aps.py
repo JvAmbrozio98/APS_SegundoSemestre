@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import filedialog
 
 def numerosCra(pa, al):
     
@@ -8,6 +9,14 @@ def numerosCra(pa, al):
                 pa[i] = j
     return pa
 
+def abrir_arquivo():
+    arquivo = filedialog.askopenfilename(filetypes=[("Arquivos de Texto", "*.txt")])
+    if arquivo:
+        with open(arquivo, 'r') as file:
+            caixa_palavra.delete(0, END)
+            caixa_palavra.insert(0, file.read())
+
+# ------------------------------------------------------------------------------------------------------------------
 def vigenere():
 
     global alfabeto
@@ -45,8 +54,10 @@ def vigenere():
     for k in range(len(mensagenNU)):
         mensagen = mensagen + (alfabeto[mensagenNU[k]])
     
-    resultado["text"] = "Resultado: " + mensagen.upper()
+    resultado.delete(0, END)
+    resultado.insert(0, mensagen.upper())
 
+# -----------------------------------------------------------------------------------------------------------
 def cesar():
     global alfabeto
     crip= cript.get()
@@ -55,7 +66,6 @@ def cesar():
     chave = int(caixa_chave.get())
     mensagen = ''
     mensagenNU=[]
-    print (crip)
 
     if crip == 1:
         for j in range(len(palavraNU)):
@@ -71,8 +81,35 @@ def cesar():
     for k in range(len(mensagenNU)):
         mensagen = mensagen + (alfabeto[mensagenNU[k]])    
     
-    resultado["text"] = "Resultado: " + mensagen.upper()
+    resultado.delete(0, END)
+    resultado.insert(0, mensagen.upper())
 
+# ----------------------------------------------------------------------------------------------------
+def rc4(chave, txt_secreto):
+    S = list(range(256))
+    j = 0
+    codigo = []
+ 
+    for i in range(256):
+        j = (j + S[i] + chave[i % len(chave)]) % 256
+        S[i], S[j] = S[j], S[i]
+ 
+    i = j = 0
+    for letra in txt_secreto:
+        i = (i + 1) % 256
+        j = (j + S[i]) % 256
+        S[i], S[j] = S[j], S[i]
+        k = S[(S[i] + S[j]) % 256]
+        codigo.append(chr(ord(letra) ^ k))
+    return ''.join(codigo)
+
+def encriptar_mensagem():
+    chave = caixa_chave.get().encode('utf-8')
+    txt_secreto = caixa_palavra.get()
+    textocifrado = rc4(chave, txt_secreto)
+    resultado.delete(0, END)
+    resultado.insert(0, textocifrado)
+# ----------------------------------------------------------------------------------------------------------
 
 alfabeto=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
@@ -82,22 +119,22 @@ cript = IntVar()
 
 janela.title("APS")
 
-texto = Label(janela, text = "aaaaaaaaaaa", font="Arial 25")
+texto = Label(janela, text = "APS", font="Arial 25")
 texto.grid(columnspan=3,row=0, padx=10, pady=0)
 
 texto = Label(janela, text = "partisipantes: Carlos, Giovane, João, Ottávio, Sárley", font="Arial 10")
 texto.grid(column=1, columnspan=2,row=1, padx=5, pady=0)
 
-resultado = Label(janela, text = "", font="Arial 20")
+resultado = Entry(janela, background="white", text = "", font="Arial 20")
 resultado.grid(columnspan=3, row=2, padx=10, pady=10)
 
-text_palavra = Label(janela, text = "Palavra:", font="Arial 20")
-text_palavra.grid(column=0, row=3, padx=10, pady=10)
+botaopalavra = Button(janela, text="Palavra:", font="Arial 15", command=abrir_arquivo)
+botaopalavra.grid(column=0, row=3, padx=10, pady=10)
 caixa_palavra = Entry(janela, background="gray", font="Arial 20")
 caixa_palavra.grid(column=1, columnspan=2, row=3, padx=10, pady=10)
 
-text_chave = Label(janela, text = "Chave:", font="Arial 20")
-text_chave.grid(column=0, row=4, padx=10, pady=10)
+botaochave = Label(janela, text = "Chave:", font="Arial 15")
+botaochave.grid(column=0, row=4, padx=10, pady=10)
 caixa_chave = Entry(janela, background="gray", font="Arial 20")
 caixa_chave.grid(column=1, columnspan=2, row=4, padx=10, pady=10)
 
@@ -112,7 +149,7 @@ botaoCésar.grid(column=0, row=6, padx=10, pady=20)
 botaoVigenere = Button(janela, text="Vigener", font="Arial 15", command=vigenere)
 botaoVigenere.grid(column=1, row=6, padx=10, pady=20)
 
-botaoRC4 = Button(janela, text="RC4", font="Arial 15")
+botaoRC4 = Button(janela, text="RC4", font="Arial 15", command=encriptar_mensagem)
 botaoRC4.grid(column=2, row=6, padx=10, pady=20)
 
 
